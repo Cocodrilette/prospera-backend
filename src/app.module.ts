@@ -4,11 +4,11 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OrdersModule } from './orders/orders.module';
+import { Errors } from './errors/errors';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.development.env',
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MONGODB_URL, {
@@ -17,6 +17,6 @@ import { OrdersModule } from './orders/orders.module';
     OrdersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Errors],
 })
 export class AppModule {}
