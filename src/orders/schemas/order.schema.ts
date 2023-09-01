@@ -23,6 +23,9 @@ export class Order {
 
   @Prop({ required: true, type: Date })
   updatedAt: Date;
+
+  @Prop({ required: true })
+  requestId: string;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
