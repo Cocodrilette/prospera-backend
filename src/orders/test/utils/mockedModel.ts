@@ -1,5 +1,6 @@
 import { Model } from 'mongoose';
-import { Currency, MockedSchema, OrderStatus } from '../../types/schema.types';
+import { MockedSchema } from '../../../orders/types/schema.types';
+import { Currency, OrderStatus } from '../../../paypal/types/order.types';
 
 export const orderModel: Model<MockedSchema> = {
   getById: (id: string): MockedSchema => {

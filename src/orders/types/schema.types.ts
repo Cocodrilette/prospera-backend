@@ -1,12 +1,4 @@
-export enum Currency {
-  USD = 'USD',
-}
-
-export enum OrderStatus {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-}
+import { Currency, OrderStatus } from '../../paypal/types/order.types';
 
 export type MockedSchema = {
   _id: string;

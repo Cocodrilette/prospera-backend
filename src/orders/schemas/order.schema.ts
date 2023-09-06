@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Currency, OrderStatus } from '../types/schema.types';
+import { Currency, OrderStatus } from '../../paypal/types/order.types';
 
 @Schema()
 export class Order {
@@ -26,6 +26,9 @@ export class Order {
 
   @Prop({ required: true })
   requestId: string;
+
+  @Prop({ default: '' })
+  paypalOrderId: string;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
