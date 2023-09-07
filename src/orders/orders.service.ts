@@ -1,4 +1,4 @@
-import { Document, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
@@ -8,7 +8,10 @@ import { PaypalService } from '../paypal/paypal.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './schemas/order.schema';
-import { CreateOrderResponse } from './types/responses.types';
+import {
+  CreateOrderResponse,
+  OrderUpdateSuccess,
+} from './types/responses.types';
 
 @Injectable()
 export class OrdersService {
@@ -20,6 +23,7 @@ export class OrdersService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<CreateOrderResponse> {
+    console.log({ createOrderDto });
     const order = await this.createOrderObject(createOrderDto);
     const paypalOrder = await this.paypalService.createOrder(order);
 
@@ -29,6 +33,16 @@ export class OrdersService {
     }
 
     return { orderID: paypalOrder.id };
+  }
+
+  async complete(orderID: string): Promise<OrderUpdateSuccess> {
+    console.log({ orderID });
+    const order = await this.findOneOrderBy('paypalOrderId', orderID);
+    order.status = OrderStatus.COMPLETED;
+
+    await this.updateOrderBy('paypalOrderId', orderID, order);
+
+    return { orderID };
   }
 
   findAll() {
@@ -56,8 +70,6 @@ export class OrdersService {
     value: Order[K],
     order: Order,
   ) {
-    await this.findOneOrderBy(property, value);
-
     try {
       const updatedOrder = await this.orderModel.findOneAndUpdate(
         { [property]: value },

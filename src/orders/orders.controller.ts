@@ -20,6 +20,11 @@ export class OrdersController {
     return this.ordersService.create(createOrderDto);
   }
 
+  @Post('complete/:orderID')
+  complete(@Param('orderID') orderID: string) {
+    return this.ordersService.complete(orderID);
+  }
+
   @Get()
   findAll() {
     return this.ordersService.findAll();
