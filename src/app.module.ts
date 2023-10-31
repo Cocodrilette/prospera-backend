@@ -9,6 +9,7 @@ import { PaypalModule } from './paypal/paypal.module';
 import configuration from './config/configuration';
 import { PaypalService } from './paypal/paypal.service';
 import { HttpModule } from '@nestjs/axios';
+import { BlockchainModule } from './blockchain/blockchain.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { HttpModule } from '@nestjs/axios';
     HttpModule,
     OrdersModule,
     PaypalModule,
+    BlockchainModule,
   ],
   controllers: [AppController],
   providers: [AppService, Errors, PaypalService],
