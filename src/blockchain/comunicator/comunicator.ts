@@ -1,29 +1,8 @@
-import {
-  http,
-  PublicClient,
-  WalletClient,
-  PrivateKeyAccount,
-  createPublicClient,
-  createWalletClient,
-} from 'viem';
-import { Chain } from 'viem/_types/types/chain';
-import { privateKeyToAccount } from 'viem/accounts';
+import { Contract, Wallet, ethers } from 'ethers';
 import { hardhat, polygonZkEvmTestnet } from 'viem/chains';
 
-interface ContractCallParams {
-  address: `0x${string}`;
-  functionName: string;
-  abi: any[];
-  args: any[];
-}
-
 export class Comunicator {
-  private _publicClient: PublicClient;
-  private _walletClient: {
-    client: WalletClient;
-    account: PrivateKeyAccount;
-    chain: Chain;
-  };
+  private _contractInstance: Contract;
 
   constructor(
     private readonly contractName: string,
@@ -43,68 +22,40 @@ export class Comunicator {
     return this.abi;
   }
 
-  readContract({ address, abi, args, functionName }: ContractCallParams) {
-    const client = this._getPublicClient();
-    return client.readContract({
-      address,
-      abi,
-      args,
-      functionName,
-    });
+  readContract(): Contract {
+    const contract = this._getContractInstance();
+    return contract;
   }
 
-  private _getPublicClient(): PublicClient {
-    if (!this._publicClient) {
-      this._publicClient = createPublicClient({
-        chain: this._getChain(),
-        transport: http(this._getHttpProviderUrl()),
-      });
+  writeContract(): Contract {
+    const contract = this._getContractInstance();
+    const signer = this._getSigner();
+
+    return contract.connect(signer) as Contract;
+  }
+
+  private _getContractInstance(): Contract {
+    if (!this._contractInstance) {
+      const provider = this._getProvider();
+      this._contractInstance = new Contract(this.address, this.abi, provider);
     }
 
-    return this._publicClient;
+    return this._contractInstance;
   }
 
-  async writeContract({
-    address,
-    abi,
-    args,
-    functionName,
-  }: ContractCallParams) {
-    const { client, account, chain } = this._getWalletClient();
+  private _getSigner() {
+    const privateKey = this._getPrivateKey();
+    const provider = this._getProvider();
 
-    return client.writeContract({
-      address,
-      abi,
-      args,
-      functionName,
-      account,
-      chain,
-    });
+    const signer = new Wallet(privateKey, provider);
+    return signer;
   }
 
-  private _getWalletClient(): {
-    client: WalletClient;
-    account: PrivateKeyAccount;
-    chain: Chain;
-  } {
-    if (!this._walletClient) {
-      const pk = this._getPrivateKey();
-      const account = privateKeyToAccount(pk);
-      const chain = this._getChain();
-      const client = createWalletClient({
-        account,
-        chain,
-        transport: http(),
-      });
+  private _getProvider() {
+    const chain = this._getChain();
+    const httpProviderUrl = this._getHttpProviderUrl();
 
-      this._walletClient = {
-        client,
-        account,
-        chain,
-      };
-    }
-
-    return this._walletClient;
+    return new ethers.JsonRpcProvider(httpProviderUrl);
   }
 
   private _getChain() {

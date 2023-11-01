@@ -3,9 +3,9 @@ import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Order, OrderSchema } from './schemas/order.schema';
-import { PaypalModule } from 'src/paypal/paypal.module';
-import { PaypalService } from 'src/paypal/paypal.service';
+import { PaypalService } from '../paypal/paypal.service';
 import { HttpModule } from '@nestjs/axios';
+import { BlockchainService } from '../blockchain/blockchain.service';
 
 @Module({
   imports: [
@@ -13,6 +13,6 @@ import { HttpModule } from '@nestjs/axios';
     HttpModule,
   ],
   controllers: [OrdersController],
-  providers: [OrdersService, PaypalService],
+  providers: [OrdersService, PaypalService, BlockchainService],
 })
 export class OrdersModule {}

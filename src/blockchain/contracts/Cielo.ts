@@ -1,9 +1,4 @@
-import { ContractData } from '../blockchain.service';
-
-interface CieloContractData extends ContractData {}
-
-export const CieloContractData: CieloContractData = {
-  address: process.env.CIELO_CONTRACT_ADDRESS as `0x${string}`,
+export const CieloContractData = {
   abi: [
     {
       inputs: [],

@@ -1,3 +1,5 @@
+import { CieloContractData } from 'src/blockchain/contracts';
+
 export default () => ({
   providers: {
     payment: {
@@ -8,6 +10,12 @@ export default () => ({
         authPath: process.env.PAYPAL_AUTH_PATH,
         ordersPath: process.env.PAYPAL_ORDERS_PATH,
       },
+    },
+  },
+  contracts: {
+    cielo: {
+      address: process.env.CIELO_CONTRACT_ADDRESS,
+      abi: CieloContractData.abi,
     },
   },
 });

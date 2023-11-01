@@ -2,18 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CreateBlockchainDto } from './dto/create-blockchain.dto';
 import { UpdateBlockchainDto } from './dto/update-blockchain.dto';
 import { ERC20Comunicator } from './comunicator';
-import { CieloContractData } from './contracts';
-
-export interface ContractData {
-  address: `0x${string}`;
-  abi: any[];
-}
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class BlockchainService {
   private readonly logger = new Logger(BlockchainService.name);
 
   erc20CieloContract: ERC20Comunicator;
+
+  constructor(private readonly configService: ConfigService) {}
 
   get erc20Cielo() {
     if (!this.erc20CieloContract) {
@@ -27,19 +24,25 @@ export class BlockchainService {
     return this.erc20CieloContract;
   }
 
-  get erc20CieloContractData(): ContractData {
-    return {
-      address: CieloContractData.address,
-      abi: CieloContractData.abi,
-    };
-  }
-
   mint({ to, amount }: { to: string; amount: number }) {
     try {
       return this.erc20Cielo.mint({ account: to, amount: amount.toString() });
     } catch (error) {
       this.logger.error(error);
     }
+  }
+
+  get erc20CieloContractData(): {
+    address: `0x${string}`;
+    abi: any[];
+  } {
+    const cieloAddress = this.configService.get('contracts.cielo.address');
+    const cieloAbi = this.configService.get('contracts.cielo.abi');
+
+    return {
+      address: cieloAddress,
+      abi: cieloAbi,
+    };
   }
 
   create(createBlockchainDto: CreateBlockchainDto) {
