@@ -7,6 +7,7 @@ export class ERC20Comunicator extends Comunicator {
 
   public async mint({ amount, account }: { amount: string; account: string }) {
     const hash = await this._mint({ amount, account });
+    return hash;
   }
 
   public async _mint({ amount, account }: { amount: string; account: string }) {

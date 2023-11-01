@@ -36,7 +36,7 @@ export class BlockchainService {
 
   mint({ to, amount }: { to: string; amount: number }) {
     try {
-      this.erc20Cielo.mint({ account: to, amount: amount.toString() });
+      return this.erc20Cielo.mint({ account: to, amount: amount.toString() });
     } catch (error) {
       this.logger.error(error);
     }
