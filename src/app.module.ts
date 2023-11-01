@@ -18,7 +18,7 @@ import { BlockchainModule } from './blockchain/blockchain.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MONGODB_URL, {
-      dbName: process.env.MONGODB_DB_NAME,
+      dbName: process.env.NODE_ENV || 'test',
     }),
     HttpModule,
     OrdersModule,

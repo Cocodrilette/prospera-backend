@@ -32,10 +32,12 @@
     "axios": "^1.5.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "ethers": "^6.8.0",
     "mongoose": "^7.5.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "viem": "^1.18.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
