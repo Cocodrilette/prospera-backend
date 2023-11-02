@@ -10,6 +10,9 @@ import configuration from './config/configuration';
 import { PaypalService } from './paypal/paypal.service';
 import { HttpModule } from '@nestjs/axios';
 import { BlockchainModule } from './blockchain/blockchain.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { BlockchainModule } from './blockchain/blockchain.module';
     OrdersModule,
     PaypalModule,
     BlockchainModule,
+    AuthModule,
+    UsersModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService, Errors, PaypalService],
