@@ -52,20 +52,8 @@ export class Comunicator {
   }
 
   private _getProvider() {
-    const chain = this._getChain();
     const httpProviderUrl = this._getHttpProviderUrl();
-
     return new ethers.JsonRpcProvider(httpProviderUrl);
-  }
-
-  private _getChain() {
-    if (process.env.NODE_ENV === 'test') {
-      return hardhat;
-    } else if (process.env.NODE_ENV === 'development') {
-      return polygonZkEvmTestnet;
-    } else {
-      return hardhat;
-    }
   }
 
   private _getHttpProviderUrl() {
