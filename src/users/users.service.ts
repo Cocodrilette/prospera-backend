@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CommonService } from 'src/common/common.service';
 import {
@@ -9,6 +9,11 @@ import {
   UserSuccessCreateResponse,
   UserSuccessDeleteResponse,
 } from './types/user.types';
+import {
+  FilteredUserResponse,
+  FindMethodOptions,
+  RawUser,
+} from './types/service.types';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +26,8 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const user = new this.userModel({
       ...createUserDto,
+      password: await this.commonService.crypto.hash(createUserDto.password),
+      address: createUserDto.address.toLowerCase(),
       createdAt: new Date(),
       updatedAt: new Date(),
       isActive: true,
@@ -47,9 +54,17 @@ export class UsersService {
 
   async findOne(id: string) {
     const user = await this._findOne(id);
+    return this._filterUserResponse(user) || null;
+  }
 
-    if (!user) return null;
-    return this._filterUserResponse(user);
+  async findOneByEthAddress(
+    ethAddress: string,
+    options: FindMethodOptions = { raw: false },
+  ): Promise<RawUser | FilteredUserResponse> {
+    const user = await this._findOneByEthAddress(
+      ethAddress.toLocaleLowerCase(),
+    );
+    return options.raw ? user : this._filterUserResponse(user);
   }
 
   async update(id: string, updateUserDto: any) {
@@ -135,8 +150,11 @@ export class UsersService {
 
   async _findOne(id: string) {
     const user = await this.userModel.findById(id).exec();
+    return user || null;
+  }
 
-    if (!user) return null;
-    return user;
+  async _findOneByEthAddress(ethAddress: string) {
+    const user = await this.userModel.findOne({ address: ethAddress }).exec();
+    return user || null;
   }
 }

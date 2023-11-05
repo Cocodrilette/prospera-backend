@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Errors } from './errors';
+import { Errors } from '../errors';
 
 describe('Errors', () => {
   let provider: Errors;

@@ -1,6 +1,9 @@
 import { CieloContractData } from 'src/blockchain/contracts';
 
 export default () => ({
+  enviroment: {
+    jwtSecret: process.env.JWT_SECRET,
+  },
   providers: {
     payment: {
       paypal: {

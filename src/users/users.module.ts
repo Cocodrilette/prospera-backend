@@ -9,5 +9,6 @@ import { CommonService } from 'src/common/common.service';
   imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }])],
   providers: [UsersService, CommonService],
   controllers: [UsersController],
+  exports: [UsersService],
 })
 export class UsersModule {}
