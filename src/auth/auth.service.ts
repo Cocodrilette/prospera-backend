@@ -18,16 +18,16 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string) {
-    const user = await this.usersService.findOneByEmail(email, {
+    const user = (await this.usersService.findOneByEmail(email, {
       raw: true,
-    });
+    })) as unknown as User;
 
     if (user && 'password' in user && user.password) {
       const isPasswordValid = await this._validatePassword(password, user);
       if (!isPasswordValid) return null;
     }
 
-    return user as UserDocument;
+    return user as RawUser;
   }
 
   async login(user: UserDocument) {

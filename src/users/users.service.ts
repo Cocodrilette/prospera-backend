@@ -56,11 +56,11 @@ export class UsersService {
     const users = await this.userModel.find().exec();
 
     if (!users) return [];
-    return users.map((user) => this.filterUserResponse(user));
+    return users.map((user) => this.filterUserResponse(user as UserDocument));
   }
 
   async findOne(id: string) {
-    const user = await this._findOne(id);
+    const user = (await this._findOne(id)) as UserDocument;
     return this.filterUserResponse(user) || null;
   }
 
@@ -68,7 +68,7 @@ export class UsersService {
     email: string,
     options: FindMethodOptions = { raw: false },
   ) {
-    const user = await this._findOneByEmail(email);
+    const user = (await this._findOneByEmail(email)) as UserDocument;
     return options.raw ? user : this.filterUserResponse(user);
   }
 
@@ -79,7 +79,7 @@ export class UsersService {
     const user = await this._findOneByEthAddress(
       ethAddress.toLocaleLowerCase(),
     );
-    return options.raw ? user : this.filterUserResponse(user);
+    return options.raw ? user : this.filterUserResponse(user as UserDocument);
   }
 
   async update(id: string, updateUserDto: any) {
@@ -160,6 +160,7 @@ export class UsersService {
       name: user.name,
       email: user.email,
       address: user.address,
+      role: user.role,
     };
   }
 
