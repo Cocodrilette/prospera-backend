@@ -25,7 +25,6 @@ export class OrdersService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<CreateOrderResponse> {
-    console.log({ createOrderDto });
     const order = await this.createOrderObject(createOrderDto);
     const paypalOrder = await this.paypalService.createOrder(order);
 
@@ -38,7 +37,6 @@ export class OrdersService {
   }
 
   async complete(orderID: string): Promise<OrderUpdateSuccess> {
-    console.log({ orderID });
     const order = await this.findOneOrderBy('paypalOrderId', orderID);
     order.status = OrderStatus.COMPLETED;
 

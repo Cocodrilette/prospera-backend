@@ -33,8 +33,6 @@ export class LocalAuthGuard extends AuthGuard('local') {
     context: ExecutionContext,
     status?: any,
   ): TUser {
-    console.log('LocalAuthGuard.handleRequest', { err, user, info, status });
-
     if (err || !user) throw err || new UnauthorizedException();
 
     return user;

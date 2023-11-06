@@ -12,8 +12,6 @@ export class AuthMiddleware implements NestMiddleware {
       'headerapikey',
       { session: false /** failureRedirect: '/api/unauthorized' */ },
       (value: any) => {
-        console.log({ value });
-
         if (value) {
           next();
         } else {

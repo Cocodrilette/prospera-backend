@@ -21,8 +21,6 @@ export class UsersController {
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Req() req, @Body() createUserDto: CreateUserDto) {
-    console.log({ req, createUserDto });
-
     return this.ordersService.create(createUserDto);
   }
 
