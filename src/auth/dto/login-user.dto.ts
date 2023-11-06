@@ -1,4 +1,4 @@
-import { Length, IsEmail, IsString, IsEthereumAddress } from 'class-validator';
+import { Length, IsEmail, IsString } from 'class-validator';
 
 export class LoginUserDto {
   @IsEmail()
