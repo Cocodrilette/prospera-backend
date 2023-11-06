@@ -34,6 +34,10 @@ export class Comunicator {
     return contract.connect(signer) as Contract;
   }
 
+  getDecimalNumber(number: bigint) {
+    return parseInt(ethers.formatEther(number.toString()));
+  }
+
   private _getContractInstance(): Contract {
     if (!this._contractInstance) {
       const provider = this._getProvider();

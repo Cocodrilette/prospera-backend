@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 import { Comunicator } from './comunicator';
-import { ethers } from 'ethers';
 
 export class ERC20Comunicator extends Comunicator {
   private logger: Logger;
@@ -30,7 +29,7 @@ export class ERC20Comunicator extends Comunicator {
     const balance = await this.readContract().balanceOf(account);
     return {
       rawBalance: balance.toString(),
-      balance: parseInt(ethers.formatEther(balance.toString())),
+      balance: this.getDecimalNumber(balance),
     };
   }
 }
