@@ -13,7 +13,7 @@ export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {
       },
       true,
       async (apikey: string | undefined, done: any) => {
-        const isValid = this.authService.validateApiKey(apikey);
+        const isValid = this.validate(apikey);
         done(null, isValid);
       },
     );

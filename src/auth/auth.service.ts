@@ -1,12 +1,11 @@
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 
-import { CommonService } from '../common/common.service';
-import { RawUser } from '../users/types/service.types';
 import { UsersService } from '../users/users.service';
-import { User } from '../users/schemas/user.schema';
-import { LoginUserDto } from './dto/login-user.dto';
+import { RawUser } from '../users/types/service.types';
+import { CommonService } from '../common/common.service';
 import { UserDocument } from 'src/users/types/user.types';
+import { User } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -30,10 +29,22 @@ export class AuthService {
   }
 
   async login(user: UserDocument) {
-    const payload = { username: user.name, sub: user.address };
+    const payload = { email: user.email, sub: user.address };
+    console.log('AuthService.login', { payload });
+
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
       user: this.usersService.filterUserResponse(user),
+    };
+  }
+
+  async refreshUser(user: Partial<User>) {
+    const payload = { email: user.email, sub: user.address };
+    const _user = await this.usersService.findOneByEmail(payload.email);
+
+    return {
+      accessToken: this.jwtService.sign(payload),
+      user: _user,
     };
   }
 
