@@ -6,6 +6,7 @@ import { RawUser } from '../users/types/service.types';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/schemas/user.schema';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UserDocument } from 'src/users/types/user.types';
 
 @Injectable()
 export class AuthService {
@@ -25,16 +26,14 @@ export class AuthService {
       if (!isPasswordValid) return null;
     }
 
-    return user;
+    return user as UserDocument;
   }
 
-  async login(user: LoginUserDto) {
-    console.log({ user });
-
-    const payload = {};
-    // { username: user.name, sub: user.address };
+  async login(user: UserDocument) {
+    const payload = { username: user.name, sub: user.address };
     return {
       access_token: this.jwtService.sign(payload),
+      user: this.usersService.filterUserResponse(user),
     };
   }
 

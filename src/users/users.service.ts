@@ -49,12 +49,12 @@ export class UsersService {
     const users = await this.userModel.find().exec();
 
     if (!users) return [];
-    return users.map((user) => this._filterUserResponse(user));
+    return users.map((user) => this.filterUserResponse(user));
   }
 
   async findOne(id: string) {
     const user = await this._findOne(id);
-    return this._filterUserResponse(user) || null;
+    return this.filterUserResponse(user) || null;
   }
 
   async findOneByEmail(
@@ -62,7 +62,7 @@ export class UsersService {
     options: FindMethodOptions = { raw: false },
   ) {
     const user = await this._findOneByEmail(email);
-    return options.raw ? user : this._filterUserResponse(user);
+    return options.raw ? user : this.filterUserResponse(user);
   }
 
   async findOneByEthAddress(
@@ -72,7 +72,7 @@ export class UsersService {
     const user = await this._findOneByEthAddress(
       ethAddress.toLocaleLowerCase(),
     );
-    return options.raw ? user : this._filterUserResponse(user);
+    return options.raw ? user : this.filterUserResponse(user);
   }
 
   async update(id: string, updateUserDto: any) {
@@ -125,7 +125,7 @@ export class UsersService {
     return {
       message: customMessage ?? 'User created successfully',
       success: true,
-      user: this._filterUserResponse(user),
+      user: this.filterUserResponse(user),
     };
   }
 
@@ -147,7 +147,7 @@ export class UsersService {
     };
   }
 
-  private _filterUserResponse(user: UserDocument) {
+  filterUserResponse(user: UserDocument) {
     return {
       id: user._id,
       name: user.name,
