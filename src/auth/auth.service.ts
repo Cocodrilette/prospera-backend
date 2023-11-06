@@ -5,6 +5,7 @@ import { CommonService } from '../common/common.service';
 import { RawUser } from '../users/types/service.types';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/schemas/user.schema';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,12 +15,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(address: string, password: string) {
-    const user = await this.usersService.findOneByEthAddress(address, {
+  async validateUser(email: string, password: string) {
+    const user = await this.usersService.findOneByEmail(email, {
       raw: true,
     });
 
-    if ('password' in user && user.password) {
+    if (user && 'password' in user && user.password) {
       const isPasswordValid = await this._validatePassword(password, user);
       if (!isPasswordValid) return null;
     }
@@ -27,8 +28,11 @@ export class AuthService {
     return user;
   }
 
-  async login(user: User) {
-    const payload = { username: user.name, sub: user.address };
+  async login(user: LoginUserDto) {
+    console.log({ user });
+
+    const payload = {};
+    // { username: user.name, sub: user.address };
     return {
       access_token: this.jwtService.sign(payload),
     };

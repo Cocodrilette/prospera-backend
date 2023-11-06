@@ -57,6 +57,14 @@ export class UsersService {
     return this._filterUserResponse(user) || null;
   }
 
+  async findOneByEmail(
+    email: string,
+    options: FindMethodOptions = { raw: false },
+  ) {
+    const user = await this._findOneByEmail(email);
+    return options.raw ? user : this._filterUserResponse(user);
+  }
+
   async findOneByEthAddress(
     ethAddress: string,
     options: FindMethodOptions = { raw: false },
@@ -155,6 +163,11 @@ export class UsersService {
 
   async _findOneByEthAddress(ethAddress: string) {
     const user = await this.userModel.findOne({ address: ethAddress }).exec();
+    return user || null;
+  }
+
+  async _findOneByEmail(email: string) {
+    const user = await this.userModel.findOne({ email }).exec();
     return user || null;
   }
 }
