@@ -32,6 +32,17 @@ export class BlockchainService {
     }
   }
 
+  async balanceOf(address: string): Promise<{
+    rawBalance: string;
+    balance: number;
+  }> {
+    try {
+      return await this.erc20Cielo.balanceOf(address);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
   get erc20CieloContractData(): {
     address: `0x${string}`;
     abi: any[];

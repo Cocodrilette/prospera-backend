@@ -47,4 +47,9 @@ export class BlockchainController {
   remove(@Param('id') id: string) {
     return this.blockchainService.remove(+id);
   }
+
+  @Get('balance/:address')
+  balanceOf(@Param('address') address: string) {
+    return this.blockchainService.balanceOf(address);
+  }
 }
