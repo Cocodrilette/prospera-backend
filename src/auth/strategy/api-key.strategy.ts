@@ -9,16 +9,11 @@ export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {
     super(
       {
         header: 'x-api-key',
-        prefix: 'Api-Key',
+        prefix: 'Api-Key ',
       },
       true,
       async (apikey: string | undefined, done: any) => {
-        console.log('apikey', apikey);
-
         const isValid = this.authService.validateApiKey(apikey);
-
-        console.log({ isValid });
-
         done(null, isValid);
       },
     );
