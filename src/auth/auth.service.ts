@@ -56,8 +56,6 @@ export class AuthService {
       password: await this.commonService.crypto.hash(user.password),
     };
 
-    console.log({ newUser });
-
     return await this.usersService.create(newUser);
   }
 
