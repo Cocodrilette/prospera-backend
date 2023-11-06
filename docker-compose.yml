@@ -3,7 +3,7 @@ services:
   prospera-backend:
     build: .
     ports:
-      - '3040:3040'
+      - '8080:8080'
     volumes:
       - .:/src
     command: pnpm start

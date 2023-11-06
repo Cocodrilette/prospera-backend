@@ -14,8 +14,8 @@ RUN pnpm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Expose port 3000 for the application
-EXPOSE 3000
+# Expose port 8080 for the application
+EXPOSE 8080
 
 # Define the command to run the application
 CMD ["pnpm", "start:prod"]
