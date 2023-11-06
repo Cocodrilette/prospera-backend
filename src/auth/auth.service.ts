@@ -4,8 +4,10 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { RawUser } from '../users/types/service.types';
 import { CommonService } from '../common/common.service';
-import { UserDocument } from 'src/users/types/user.types';
+import { UserDocument, ValidRoles } from 'src/users/types/user.types';
 import { User } from 'src/users/schemas/user.schema';
+import { RegisterUserDto } from './dto/register-user.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -45,6 +47,18 @@ export class AuthService {
       accessToken: this.jwtService.sign(payload),
       user: _user,
     };
+  }
+
+  async register(user: RegisterUserDto) {
+    const newUser: CreateUserDto = {
+      ...user,
+      role: ValidRoles.USER,
+      password: await this.commonService.crypto.hash(user.password),
+    };
+
+    console.log({ newUser });
+
+    return await this.usersService.create(newUser);
   }
 
   validateApiKey(apiKey: string): boolean {

@@ -1,7 +1,11 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
-import { HydratedDocument, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CommonService } from 'src/common/common.service';
 import {
@@ -24,6 +28,9 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    const ifAlreadyExists = await this._findOneByEmail(createUserDto.email);
+    if (ifAlreadyExists) return new BadRequestException();
+
     const user = new this.userModel({
       ...createUserDto,
       password: await this.commonService.crypto.hash(createUserDto.password),
