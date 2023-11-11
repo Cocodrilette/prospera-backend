@@ -47,10 +47,14 @@ export class AuthService {
     const payload = { email: user.email, sub: user.address };
     const _user = await this.usersService.findOneByEmail(payload.email);
 
-    return {
+    const resData = {
       accessToken: this.jwtService.sign(payload),
       user: _user,
     };
+
+    console.log({ resData });
+
+    return resData;
   }
 
   async register(user: RegisterUserDto) {
