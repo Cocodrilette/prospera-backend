@@ -37,10 +37,14 @@ export class AuthService {
   async login(user: UserDocument) {
     const payload = { email: user.email, sub: user.address };
 
-    return {
+    const resData = {
       accessToken: this.jwtService.sign(payload),
-      user: this.usersService.filterUserResponse(user),
+      user: await this.usersService.findOneByEthAddress(user.address),
     };
+
+    console.log({ resData });
+
+    return resData;
   }
 
   async refreshUser(user: Partial<User>) {
