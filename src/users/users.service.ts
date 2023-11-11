@@ -77,8 +77,6 @@ export class UsersService {
       delete userWallet.address;
     }
 
-    console.log({ userWallet, userAddress });
-
     const ethWallet = new this.ethWalletModel({
       address: userAddress,
       privateKey: userWallet.privateKey,
@@ -95,8 +93,6 @@ export class UsersService {
         (error) => this._onUserCreatedError(error),
       );
 
-    console.log({ ethWalletResult });
-
     const user = new this.userModel({
       ...createClerkUserDto,
       name:
@@ -110,8 +106,6 @@ export class UsersService {
       role: ValidRoles.USER,
       ethWallet: ethWalletResult._id.toString(),
     });
-
-    console.log({ user });
 
     const result = await this.commonService.unsafeOperations.executeOrCatch<
       User,

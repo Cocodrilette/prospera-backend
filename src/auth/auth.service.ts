@@ -1,5 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -12,6 +12,8 @@ import { CreateClerkUserDto } from 'src/users/dto/create-clerk-user.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly usersService: UsersService,
     private readonly commonService: CommonService,
@@ -35,8 +37,6 @@ export class AuthService {
   }
 
   async login(user: UserDocument) {
-    console.log({ user });
-
     const payload = { email: user.email, sub: user.address };
 
     const resData = {
@@ -47,8 +47,6 @@ export class AuthService {
     if (resData.user === null) {
       throw new UnauthorizedException();
     }
-
-    console.log({ resData });
 
     return resData;
   }
@@ -62,8 +60,6 @@ export class AuthService {
       user: _user,
     };
 
-    console.log({ resData });
-
     return resData;
   }
 
@@ -74,8 +70,6 @@ export class AuthService {
       password: await this.commonService.crypto.hash(user.password),
     };
 
-    console.log({ newUser });
-
     return await this.usersService.create(newUser);
   }
 
@@ -85,20 +79,16 @@ export class AuthService {
   }
 
   async handleUserId(createClerkUserDto: CreateClerkUserDto) {
-    console.log({ createClerkUserDto });
-
     const user = await this.usersService.findOneByClerkId(
       createClerkUserDto.clerkId,
     );
 
-    console.log({ user });
-
     if (user == null) {
-      console.log('Creating new user');
+      this.logger.debug('Creating new user');
       const user = await this.usersService.createClerkUser(createClerkUserDto);
       return this.login(user as unknown as UserDocument);
     } else {
-      console.log('Updating existing user');
+      this.logger.debug('Updating existing user session');
       return this.login(user as unknown as UserDocument);
     }
   }
