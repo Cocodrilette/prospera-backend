@@ -9,11 +9,12 @@ import {
 export class CreateClerkUserDto {
   @IsOptional()
   @IsEthereumAddress()
-  address: string;
+  address?: string;
 
   @IsString()
+  @IsOptional()
   @Length(1, 255)
-  name: string;
+  name?: string;
 
   @IsEmail()
   email: string;

@@ -96,7 +96,7 @@ export class AuthService {
     if (user == null) {
       console.log('Creating new user');
       const user = await this.usersService.createClerkUser(createClerkUserDto);
-      return user && this.login(user as unknown as UserDocument);
+      return this.login(user as unknown as UserDocument);
     } else {
       console.log('Updating existing user');
       return this.login(user as unknown as UserDocument);

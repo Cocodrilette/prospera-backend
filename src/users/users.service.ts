@@ -99,6 +99,9 @@ export class UsersService {
 
     const user = new this.userModel({
       ...createClerkUserDto,
+      name:
+        createClerkUserDto.name ??
+        this._getNameFromEmail(createClerkUserDto.email),
       address: userAddress,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -280,5 +283,9 @@ export class UsersService {
       privateKey: cryptoAdapter.encrypt(wallet.privateKey),
       mnemonic: cryptoAdapter.encrypt(wallet.mnemonic.phrase),
     };
+  }
+
+  private _getNameFromEmail(email: string) {
+    return email.split('@')[0];
   }
 }
