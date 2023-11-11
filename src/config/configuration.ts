@@ -3,6 +3,7 @@ import { CieloContractData } from 'src/blockchain/contracts';
 export default () => ({
   enviroment: {
     jwtSecret: process.env.JWT_SECRET,
+    signKey: process.env.ENCRYPTION_SIGNING_KEY,
   },
   providers: {
     payment: {

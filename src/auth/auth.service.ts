@@ -79,14 +79,20 @@ export class AuthService {
   }
 
   async handleUserId(createClerkUserDto: CreateClerkUserDto) {
+    console.log({ createClerkUserDto });
+
     const user = await this.usersService.findOneByClerkId(
       createClerkUserDto.clerkId,
     );
 
-    if (!user) {
-      const user = this.usersService.createClerkUser(createClerkUserDto);
+    console.log({ user });
+
+    if (user == null) {
+      console.log('Creating new user');
+      const user = await this.usersService.createClerkUser(createClerkUserDto);
       return user && this.login(user as unknown as UserDocument);
     } else {
+      console.log('Updating existing user');
       return this.login(user as unknown as UserDocument);
     }
   }

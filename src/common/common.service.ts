@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { UnsafeOperationAdapter } from './adapter/unsafe-operation.adapter';
 import { HashAdapter } from './adapter/hash.adapter';
+import { CryptoAdapter } from './adapter/crypto.adapter';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CommonService {
   _hashAdapter: HashAdapter;
   _unsafeOperationsAdapter: UnsafeOperationAdapter;
+  _cryptoAdapter: CryptoAdapter;
+
+  constructor(private readonly configService: ConfigService) {}
 
   get unsafeOperations() {
     const unsafeOperationsAdapter = this._getUnsafeOperationsAdapter();
@@ -17,10 +22,14 @@ export class CommonService {
 
   get crypto() {
     const hashAdapter = this._getHashAdapter();
+    const cryptoAdapter = this._getCryptoAdapter();
 
     return {
       hash: hashAdapter.hash,
       compare: hashAdapter.compare,
+      encrypt: cryptoAdapter.encrypt,
+      decrypt: cryptoAdapter.decrypt,
+      createEthWallet: cryptoAdapter.createEthWallet,
     };
   }
 
@@ -38,5 +47,13 @@ export class CommonService {
     }
 
     return this._unsafeOperationsAdapter;
+  }
+
+  private _getCryptoAdapter() {
+    if (!this._cryptoAdapter) {
+      this._cryptoAdapter = new CryptoAdapter(this.configService.get<string>("signKey"));
+    }
+
+    return this._cryptoAdapter;
   }
 }

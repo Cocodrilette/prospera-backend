@@ -58,25 +58,34 @@ export class UsersService {
   }
 
   async createClerkUser(createClerkUserDto: CreateClerkUserDto) {
-    const ifAlreadyExists = await this.findOneByEthAddress(
-      createClerkUserDto.address,
-    );
-    if (ifAlreadyExists) return new BadRequestException();
+    let userWallet: {
+      address: string;
+      privateKey: string;
+      mnemonic: string;
+    } | null = null;
+    let userAddress = null;
 
-    const userAddress = createClerkUserDto.address
-      ? createClerkUserDto.address.toLowerCase()
-      : () => {
-          throw new BadRequestException('Address is required');
-        };
+    if (createClerkUserDto.address && createClerkUserDto.address !== '') {
+      userAddress = createClerkUserDto.address.toLowerCase();
+    } else {
+      userWallet = this._createEthWallet();
+      userAddress = userWallet.address;
+    }
+
+    console.log({ userWallet, userAddress });
 
     const user = new this.userModel({
       ...createClerkUserDto,
       address: userAddress,
       createdAt: new Date(),
       updatedAt: new Date(),
+      password: await this.commonService.crypto.hash(userWallet.mnemonic),
       isActive: true,
       role: ValidRoles.USER,
+      ethWallet: userWallet,
     });
+
+    console.log({ user });
 
     const result = await this.commonService.unsafeOperations.executeOrCatch<
       User,
@@ -121,10 +130,9 @@ export class UsersService {
     ethAddress: string,
     options: FindMethodOptions = { raw: false },
   ): Promise<RawUser | FilteredUserResponse> {
-    const user = await this._findOneByEthAddress(
-      ethAddress.toLocaleLowerCase(),
-    );
+    const user = await this._findOneByEthAddress(ethAddress.toLowerCase());
     if (!user) return null;
+
     return options.raw
       ? user
       : this.filterUserResponse(user as unknown as UserDocument);
@@ -237,5 +245,15 @@ export class UsersService {
   async _findOneByEmail(email: string) {
     const user = await this.userModel.findOne({ email }).exec();
     return user || null;
+  }
+
+  _createEthWallet() {
+    const wallet = this.commonService.crypto.createEthWallet();
+
+    return {
+      address: wallet.address,
+      privateKey: this.commonService.crypto.encrypt(wallet.privateKey),
+      mnemonic: this.commonService.crypto.encrypt(wallet.mnemonic.phrase),
+    };
   }
 }

@@ -35,6 +35,12 @@ export class User {
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Operation' }] })
   operations: Operation[];
+
+  @Prop({ type: String })
+  ethWallet: {
+    privateKey: string;
+    mnemonic: string;
+  } | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
