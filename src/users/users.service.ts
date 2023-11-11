@@ -21,6 +21,7 @@ import {
   RawUser,
 } from './types/service.types';
 import { CreateClerkUserDto } from './dto/create-clerk-user.dto';
+import { EthWallet } from './entities/ethWallet.entity';
 
 @Injectable()
 export class UsersService {
@@ -30,6 +31,8 @@ export class UsersService {
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
     private readonly commonService: CommonService,
+    @InjectModel(EthWallet.name)
+    private readonly ethWalletModel: Model<EthWallet>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -68,11 +71,31 @@ export class UsersService {
     if (createClerkUserDto.address && createClerkUserDto.address !== '') {
       userAddress = createClerkUserDto.address.toLowerCase();
     } else {
-      userWallet = this._createEthWallet();
+      userWallet = await this._createEthWallet();
       userAddress = userWallet.address;
+
+      delete userWallet.address;
     }
 
     console.log({ userWallet, userAddress });
+
+    const ethWallet = new this.ethWalletModel({
+      address: userAddress,
+      privateKey: userWallet.privateKey,
+      mnemonic: userWallet.mnemonic,
+    });
+
+    const ethWalletResult =
+      await this.commonService.unsafeOperations.executeOrCatch<any, EthWallet>(
+        () => ethWallet.save(),
+        async (ethWallet: EthWallet) => {
+          this.logger.log('Eth wallet created');
+          return ethWallet;
+        },
+        (error) => this._onUserCreatedError(error),
+      );
+
+    console.log({ ethWalletResult });
 
     const user = new this.userModel({
       ...createClerkUserDto,
@@ -82,7 +105,7 @@ export class UsersService {
       password: await this.commonService.crypto.hash(userWallet.mnemonic),
       isActive: true,
       role: ValidRoles.USER,
-      ethWallet: userWallet,
+      ethWallet: ethWalletResult._id.toString(),
     });
 
     console.log({ user });
@@ -247,13 +270,15 @@ export class UsersService {
     return user || null;
   }
 
-  _createEthWallet() {
-    const wallet = this.commonService.crypto.createEthWallet();
+  private async _createEthWallet() {
+    const cryptoAdapter = await this.commonService.crypto.cryptoAdapter;
+
+    const wallet = cryptoAdapter.createEthWallet();
 
     return {
-      address: wallet.address,
-      privateKey: this.commonService.crypto.encrypt(wallet.privateKey),
-      mnemonic: this.commonService.crypto.encrypt(wallet.mnemonic.phrase),
+      address: wallet.address.toLowerCase(),
+      privateKey: cryptoAdapter.encrypt(wallet.privateKey),
+      mnemonic: cryptoAdapter.encrypt(wallet.mnemonic.phrase),
     };
   }
 }

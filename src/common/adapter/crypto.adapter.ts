@@ -1,45 +1,47 @@
-import { ConfigModule } from '@nestjs/config';
-import {
-  Cipher,
-  Decipher,
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-  scryptSync,
-} from 'crypto';
-import { HDNodeWallet } from 'ethers';
+import crypto, { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { HDNodeWallet, toUtf8Bytes } from 'ethers';
 
 export class CryptoAdapter {
-  private algorithm = 'aes-256-ctr';
-  private _cypherKey: string;
-  private initVector: Buffer = randomBytes(16);
+  private static algorithm = 'aes-256-ctr';
+  private static initVector: Buffer = randomBytes(16);
+  private static signKey: Buffer;
 
-  constructor(signKey: string) {
-    this._cypherKey = signKey;
+  constructor(signingKey: string) {
+    const keyBytes = toUtf8Bytes(signingKey);
+    if (!keyBytes) {
+      throw new Error('Invalid signing key');
+    }
+
+    const buffer = Buffer.from(keyBytes);
+    const safeBuffer = buffer.length > 32 ? buffer.subarray(0, 32) : buffer;
+
+    CryptoAdapter.signKey = safeBuffer;
   }
 
   encrypt(plainText: string): string {
     console.log({
       plainText,
-      _cypherKey: this._cypherKey,
-      initVector: this.initVector,
-      algorithm: this.algorithm,
+      _cypherKey: CryptoAdapter.signKey,
+      initVector: CryptoAdapter.initVector,
+      algorithm: CryptoAdapter.algorithm,
     });
 
     const cipher = createCipheriv(
-      this.algorithm,
-      this._cypherKey,
-      this.initVector,
-    );
+      CryptoAdapter.algorithm,
+      CryptoAdapter.signKey,
+      CryptoAdapter.initVector,
+    ); // @todo fix this
 
-    return Buffer.concat([cipher.update(plainText), cipher.final()]).toString();
+    return Buffer.concat([cipher.update(plainText), cipher.final()]).toString(
+      'hex',
+    );
   }
 
   decrypt(encryptedText: string): string {
     const decipher = createDecipheriv(
-      this.algorithm,
-      this._cypherKey,
-      this.initVector,
+      CryptoAdapter.algorithm,
+      CryptoAdapter.signKey,
+      CryptoAdapter.initVector,
     );
 
     return Buffer.concat([

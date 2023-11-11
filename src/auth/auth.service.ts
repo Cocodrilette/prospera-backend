@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { User } from '../users/schemas/user.schema';
+import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { RawUser } from '../users/types/service.types';
 import { CommonService } from '../common/common.service';
@@ -35,12 +35,18 @@ export class AuthService {
   }
 
   async login(user: UserDocument) {
+    console.log({ user });
+
     const payload = { email: user.email, sub: user.address };
 
     const resData = {
       accessToken: this.jwtService.sign(payload),
       user: await this.usersService.findOneByEthAddress(user.address),
     };
+
+    if (resData.user === null) {
+      throw new UnauthorizedException();
+    }
 
     console.log({ resData });
 
