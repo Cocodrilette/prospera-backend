@@ -2,9 +2,10 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schemas/user.schema';
+import { User } from './entities/user.entity';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CommonService } from 'src/common/common.service';
@@ -12,15 +13,19 @@ import {
   UserDocument,
   UserSuccessCreateResponse,
   UserSuccessDeleteResponse,
+  ValidRoles,
 } from './types/user.types';
 import {
   FilteredUserResponse,
   FindMethodOptions,
   RawUser,
 } from './types/service.types';
+import { CreateClerkUserDto } from './dto/create-clerk-user.dto';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
@@ -52,6 +57,34 @@ export class UsersService {
     return result;
   }
 
+  async createClerkUser(createClerkUserDto: CreateClerkUserDto) {
+    const ifAlreadyExists = await this.findOneByEthAddress(
+      createClerkUserDto.address,
+    );
+    if (ifAlreadyExists) return new BadRequestException();
+
+    const userAddress = createClerkUserDto.address
+      ? createClerkUserDto.address.toLowerCase()
+      : () => {
+          throw new BadRequestException('Address is required');
+        };
+
+    const user = new this.userModel({
+      ...createClerkUserDto,
+      address: userAddress,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: true,
+      role: ValidRoles.USER,
+    });
+
+    await this.commonService.unsafeOperations.executeOrCatch<void, User>(
+      () => user.save(),
+      async () => this.logger.log('Clerk user created'),
+      (error) => this._onUserCreatedError(error),
+    );
+  }
+
   async findAll() {
     const users = await this.userModel.find().exec();
 
@@ -63,6 +96,7 @@ export class UsersService {
 
   async findOne(id: string) {
     const user = (await this._findOne(id)) as unknown as UserDocument;
+    if (!user) return null;
     return this.filterUserResponse(user) || null;
   }
 
@@ -71,6 +105,7 @@ export class UsersService {
     options: FindMethodOptions = { raw: false },
   ) {
     const user = (await this._findOneByEmail(email)) as unknown as UserDocument;
+    if (!user) return null;
     return options.raw ? user : this.filterUserResponse(user);
   }
 
@@ -81,6 +116,19 @@ export class UsersService {
     const user = await this._findOneByEthAddress(
       ethAddress.toLocaleLowerCase(),
     );
+    if (!user) return null;
+    return options.raw
+      ? user
+      : this.filterUserResponse(user as unknown as UserDocument);
+  }
+
+  async findOneByClerkId(
+    clerkId: string,
+    options: FindMethodOptions = { raw: false },
+  ) {
+    const user = await this.userModel.findOne({ clerkId }).exec();
+
+    if (!user) return null;
     return options.raw
       ? user
       : this.filterUserResponse(user as unknown as UserDocument);

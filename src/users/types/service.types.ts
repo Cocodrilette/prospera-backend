@@ -1,4 +1,4 @@
-import { User } from '../schemas/user.schema';
+import { User } from '../entities/user.entity';
 
 export type RawUser = User;
 export type FilteredUserResponse = {

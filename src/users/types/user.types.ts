@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 import { SuccessResponse } from '../../common/types/success.types';
-import { User } from '../schemas/user.schema';
+import { User } from '../entities/user.entity';
 
 export interface UserDocument extends Document {
   address: string;

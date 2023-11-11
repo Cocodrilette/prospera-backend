@@ -1,13 +1,13 @@
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 
+import { User } from '../users/schemas/user.schema';
 import { UsersService } from '../users/users.service';
 import { RawUser } from '../users/types/service.types';
 import { CommonService } from '../common/common.service';
-import { UserDocument, ValidRoles } from 'src/users/types/user.types';
-import { User } from 'src/users/schemas/user.schema';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UserDocument, ValidRoles } from 'src/users/types/user.types';
 import { CreateClerkUserDto } from 'src/users/dto/create-clerk-user.dto';
 
 @Injectable()
@@ -24,7 +24,10 @@ export class AuthService {
     })) as unknown as User;
 
     if (user && 'password' in user && user.password) {
-      const isPasswordValid = await this._validatePassword(password, user);
+      const isPasswordValid = await this._validatePassword(
+        password,
+        user as RawUser,
+      );
       if (!isPasswordValid) return null;
     }
 
@@ -68,8 +71,11 @@ export class AuthService {
   }
 
   async handleUserId(createClerkUserDto: CreateClerkUserDto) {
-    console.log({ createClerkUserDto });
-    return createClerkUserDto;
+    const user = await this.usersService.findOneByClerkId(
+      createClerkUserDto.clerkId,
+    );
+
+    if (!user) return this.usersService.createClerkUser(createClerkUserDto);
   }
 
   private async _validatePassword(

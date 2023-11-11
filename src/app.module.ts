@@ -17,6 +17,7 @@ import { PaypalModule } from './paypal/paypal.module';
 import { PaypalService } from './paypal/paypal.service';
 import { ApiKeyGuard } from './auth/guard/api-key.guard';
 import { BlockchainModule } from './blockchain/blockchain.module';
+import { OperationsModule } from './operations/operations.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { BlockchainModule } from './blockchain/blockchain.module';
     UsersModule,
     CommonModule,
     PassportModule,
+    OperationsModule,
   ],
   controllers: [AppController],
   providers: [
