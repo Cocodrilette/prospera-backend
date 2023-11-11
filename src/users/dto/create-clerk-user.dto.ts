@@ -1,14 +1,13 @@
 import {
   Length,
   IsEmail,
-  IsNumber,
   IsString,
   IsEthereumAddress,
-  IsEnum,
+  IsOptional,
 } from 'class-validator';
-import { ValidRoles } from '../types/user.types';
 
-export class CreateUserDto {
+export class CreateClerkUserDto {
+  @IsOptional()
   @IsEthereumAddress()
   address: string;
 
@@ -20,9 +19,5 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  @Length(8, 255)
-  password: string;
-
-  @IsEnum(ValidRoles)
-  role: ValidRoles;
+  clerkId: string;
 }

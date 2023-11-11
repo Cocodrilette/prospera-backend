@@ -8,6 +8,7 @@ import { UserDocument, ValidRoles } from 'src/users/types/user.types';
 import { User } from 'src/users/schemas/user.schema';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { CreateClerkUserDto } from 'src/users/dto/create-clerk-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -64,6 +65,11 @@ export class AuthService {
   validateApiKey(apiKey: string): boolean {
     const currentApiKey = process.env.API_KEY;
     return currentApiKey === apiKey;
+  }
+
+  async handleUserId(createClerkUserDto: CreateClerkUserDto) {
+    console.log({ createClerkUserDto });
+    return createClerkUserDto;
   }
 
   private async _validatePassword(

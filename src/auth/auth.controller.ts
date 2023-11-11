@@ -2,6 +2,7 @@ import {
   Bind,
   Body,
   Controller,
+  Param,
   Post,
   Req,
   Request,
@@ -13,6 +14,7 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guard/jwt.guard';
 import { Public } from './decorator/public.decorator';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { CreateClerkUserDto } from 'src/users/dto/create-clerk-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -36,8 +38,8 @@ export class AuthController {
     return this.authService.register(registerUserDto);
   }
 
-  @Post('signup')
-  async signup(@Body() createUserDto: CreateUserDto) {
-    return createUserDto;
+  @Post('user')
+  async handleUserId(@Body() createClerkUserDto: CreateClerkUserDto) {
+    return this.authService.handleUserId(createClerkUserDto);
   }
 }

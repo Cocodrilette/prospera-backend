@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ValidRoles } from '../types/user.types';
 
 @Schema()
 export class User {
@@ -11,10 +12,7 @@ export class User {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ required: true })
-  age: number;
-
-  @Prop({ required: true })
+  @Prop({ type: String })
   password: string;
 
   @Prop({ required: true, type: Date })
@@ -26,8 +24,11 @@ export class User {
   @Prop({ required: true, type: Boolean, default: true })
   isActive: boolean;
 
-  @Prop({ required: true })
-  role: string;
+  @Prop({ type: String })
+  role: ValidRoles;
+
+  @Prop({ type: String })
+  clerkId: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
