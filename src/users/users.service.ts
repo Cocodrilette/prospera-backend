@@ -78,11 +78,19 @@ export class UsersService {
       role: ValidRoles.USER,
     });
 
-    await this.commonService.unsafeOperations.executeOrCatch<void, User>(
+    const result = await this.commonService.unsafeOperations.executeOrCatch<
+      User,
+      User
+    >(
       () => user.save(),
-      async () => this.logger.log('Clerk user created'),
+      async (user: User) => {
+        this.logger.log('Clerk user created');
+        return user;
+      },
       (error) => this._onUserCreatedError(error),
     );
+
+    return result;
   }
 
   async findAll() {

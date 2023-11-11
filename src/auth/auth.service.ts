@@ -75,7 +75,12 @@ export class AuthService {
       createClerkUserDto.clerkId,
     );
 
-    if (!user) return this.usersService.createClerkUser(createClerkUserDto);
+    if (!user) {
+      const user = this.usersService.createClerkUser(createClerkUserDto);
+      return user && this.login(user as unknown as UserDocument);
+    } else {
+      return this.login(user as unknown as UserDocument);
+    }
   }
 
   private async _validatePassword(
