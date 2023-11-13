@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './entities/user.entity';
-import { CommonService } from 'src/common/common.service';
+import { CommonService } from '../common/common.service';
 import { EthWallet, EthWalletSchema } from './entities/ethWallet.entity';
 
 @Module({

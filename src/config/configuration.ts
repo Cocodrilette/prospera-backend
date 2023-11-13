@@ -1,4 +1,4 @@
-import { CieloContractData } from 'src/blockchain/contracts';
+import { CieloContractData } from '../blockchain/contracts';
 
 export default () => ({
   enviroment: {

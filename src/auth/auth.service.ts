@@ -6,9 +6,9 @@ import { UsersService } from '../users/users.service';
 import { RawUser } from '../users/types/service.types';
 import { CommonService } from '../common/common.service';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { UserDocument, ValidRoles } from 'src/users/types/user.types';
-import { CreateClerkUserDto } from 'src/users/dto/create-clerk-user.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UserDocument, ValidRoles } from '../users/types/user.types';
+import { CreateClerkUserDto } from '../users/dto/create-clerk-user.dto';
 
 @Injectable()
 export class AuthService {

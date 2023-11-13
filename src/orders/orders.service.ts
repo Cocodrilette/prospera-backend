@@ -12,7 +12,7 @@ import {
   CreateOrderResponse,
   OrderUpdateSuccess,
 } from './types/responses.types';
-import { BlockchainService } from 'src/blockchain/blockchain.service';
+import { BlockchainService } from '../blockchain/blockchain.service';
 
 @Injectable()
 export class OrdersService {

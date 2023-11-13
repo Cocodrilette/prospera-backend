@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
-import { CommonService } from 'src/common/common.service';
+import { CommonService } from '../common/common.service';
 import {
   UserDocument,
   UserSuccessCreateResponse,
