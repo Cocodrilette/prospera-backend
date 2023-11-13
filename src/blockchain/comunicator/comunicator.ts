@@ -71,7 +71,12 @@ export class Comunicator {
   }
 
   private _getPrivateKey() {
-    return (process.env.DEFAULT_SIGNER ||
-      process.env.LOCAL_SIGNER) as `0x${string}`;
+    if (process.env.NODE_ENV === 'test') {
+      return process.env.LOCAL_SIGNER as `0x${string}`;
+    } else if (process.env.NODE_ENV === 'development') {
+      process.env.DEFAULT_SIGNER;
+    } else {
+      return process.env.LOCAL_SIGNER as `0x${string}`;
+    }
   }
 }

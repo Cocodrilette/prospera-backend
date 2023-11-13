@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 8080
 
 # Define the command to run the application
-CMD ["pnpm", "start:prod"]
+CMD ["pnpm", "start:dev"]
