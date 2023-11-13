@@ -1,5 +1,5 @@
-import crypto, { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
-import { HDNodeWallet, toUtf8Bytes } from 'ethers';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { HDNodeWallet, keccak256, toUtf8Bytes } from 'ethers';
 
 export class CryptoAdapter {
   private static algorithm = 'aes-256-ctr';
@@ -7,15 +7,17 @@ export class CryptoAdapter {
   private static signKey: Buffer;
 
   constructor(signingKey: string) {
-    const keyBytes = toUtf8Bytes(signingKey);
-    if (!keyBytes) {
-      throw new Error('Invalid signing key');
+    const hash = keccak256(toUtf8Bytes(signingKey));
+    let buffer = Buffer.from(hash, 'utf-8');
+
+    if (buffer.length < 32) {
+      const padding = Buffer.alloc(32 - buffer.length);
+      buffer = Buffer.concat([buffer, padding]);
+    } else if (buffer.length > 32) {
+      buffer = buffer.subarray(0, 32);
     }
 
-    const buffer = Buffer.from(keyBytes);
-    const safeBuffer = buffer.length > 32 ? buffer.subarray(0, 32) : buffer;
-
-    CryptoAdapter.signKey = safeBuffer;
+    CryptoAdapter.signKey = buffer;
   }
 
   encrypt(plainText: string): string {
@@ -30,7 +32,7 @@ export class CryptoAdapter {
       CryptoAdapter.algorithm,
       CryptoAdapter.signKey,
       CryptoAdapter.initVector,
-    ); // @todo fix this
+    );
 
     return Buffer.concat([cipher.update(plainText), cipher.final()]).toString(
       'hex',
