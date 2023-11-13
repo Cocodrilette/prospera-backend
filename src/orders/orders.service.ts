@@ -29,9 +29,6 @@ export class OrdersService {
     createOrderDto: CreateOrderDto,
     user: User,
   ): Promise<CreateOrderResponse> {
-    console.log('Auth user');
-    console.log({ user });
-
     const order = await this.createOrderObject(createOrderDto);
     const paypalOrder = await this.paypalService.createOrder(order);
 

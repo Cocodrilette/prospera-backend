@@ -51,8 +51,6 @@ export class Comunicator {
     const privateKey = this._getPrivateKey();
     const provider = this._getProvider();
 
-    console.log({ privateKey });
-
     const signer = new Wallet(privateKey, provider);
     return signer;
   }

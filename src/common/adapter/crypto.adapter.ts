@@ -21,13 +21,6 @@ export class CryptoAdapter {
   }
 
   encrypt(plainText: string): string {
-    console.log({
-      plainText,
-      _cypherKey: CryptoAdapter.signKey,
-      initVector: CryptoAdapter.initVector,
-      algorithm: CryptoAdapter.algorithm,
-    });
-
     const cipher = createCipheriv(
       CryptoAdapter.algorithm,
       CryptoAdapter.signKey,
