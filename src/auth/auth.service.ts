@@ -79,11 +79,14 @@ export class AuthService {
   }
 
   async handleUserId(createClerkUserDto: CreateClerkUserDto) {
-    const user = await this.usersService.findOneByClerkId(
-      createClerkUserDto.clerkId,
+    console.log({ createClerkUserDto });
+    const user = await this.usersService.findOneByEmail(
+      createClerkUserDto.email,
     );
 
-    if (user == null) {
+    console.log({ user });
+
+    if (user === null) {
       this.logger.debug('Creating new user');
       const user = await this.usersService.createClerkUser(createClerkUserDto);
       return this.login(user as unknown as UserDocument);

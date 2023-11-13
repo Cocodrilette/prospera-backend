@@ -2,7 +2,6 @@ import { Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import { ValidRoles } from '../types/user.types';
-import { Operation } from '../../operations/entities/operation.entity';
 
 @Schema()
 export class User {
@@ -34,7 +33,10 @@ export class User {
   clerkId: string;
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Operation' }] })
-  operations: Operation[];
+  operations: Types.ObjectId[];
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Order' }] })
+  orders: Types.ObjectId[];
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'EthWallet' }] })
   ethWalletId: Types.ObjectId;

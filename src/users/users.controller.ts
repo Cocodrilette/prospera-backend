@@ -16,31 +16,36 @@ import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly ordersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Req() req, @Body() createUserDto: CreateUserDto) {
-    return this.ordersService.create(createUserDto);
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
   findAll() {
-    return this.ordersService.findAll();
+    return this.usersService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(id);
+    return this.usersService.findOne(id);
+  }
+
+  @Get('email/:email')
+  findOneByEmail(@Param('email') email: string) {
+    return this.usersService.findOneByEmail(email);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.ordersService.update(id, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.ordersService.remove(id);
+    return this.usersService.remove(id);
   }
 }

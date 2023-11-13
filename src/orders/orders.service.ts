@@ -13,6 +13,7 @@ import {
   OrderUpdateSuccess,
 } from './types/responses.types';
 import { BlockchainService } from '../blockchain/blockchain.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class OrdersService {
@@ -24,7 +25,13 @@ export class OrdersService {
     private readonly blockchainService: BlockchainService,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto): Promise<CreateOrderResponse> {
+  async create(
+    createOrderDto: CreateOrderDto,
+    user: User,
+  ): Promise<CreateOrderResponse> {
+    console.log('Auth user');
+    console.log({ user });
+
     const order = await this.createOrderObject(createOrderDto);
     const paypalOrder = await this.paypalService.createOrder(order);
 
@@ -40,11 +47,12 @@ export class OrdersService {
     const order = await this.findOneOrderBy('paypalOrderId', orderID);
     order.status = OrderStatus.COMPLETED;
 
-    await this.updateOrderBy('paypalOrderId', orderID, order);
     await this.blockchainService.erc20Cielo.mint({
       account: order.userAddress,
       amount: BigInt(order.tokensAmount * 1e18).toString(),
     });
+
+    await this.updateOrderBy('paypalOrderId', orderID, order);
 
     return { orderID };
   }

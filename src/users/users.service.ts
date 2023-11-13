@@ -68,6 +68,8 @@ export class UsersService {
     } | null = null;
     let userAddress = null;
 
+    console.log({ createClerkUserDto });
+
     if (createClerkUserDto.address && createClerkUserDto.address !== '') {
       userAddress = createClerkUserDto.address.toLowerCase();
     } else {
@@ -76,6 +78,8 @@ export class UsersService {
 
       delete userWallet.address;
     }
+
+    console.log({ userWallet, userAddress });
 
     const ethWallet = new this.ethWalletModel({
       address: userAddress,
@@ -141,7 +145,9 @@ export class UsersService {
     email: string,
     options: FindMethodOptions = { raw: false },
   ) {
+    console.log({ email });
     const user = (await this._findOneByEmail(email)) as unknown as UserDocument;
+    console.log({ user });
     if (!user) return null;
     return options.raw ? user : this.filterUserResponse(user);
   }
@@ -162,7 +168,7 @@ export class UsersService {
     clerkId: string,
     options: FindMethodOptions = { raw: false },
   ) {
-    const user = await this.userModel.findOne({ clerkId }).exec();
+    const user = await this.userModel.findOne({ clerkId });
 
     if (!user) return null;
     return options.raw
@@ -263,7 +269,9 @@ export class UsersService {
   }
 
   async _findOneByEmail(email: string) {
-    const user = await this.userModel.findOne({ email }).exec();
+    const user = await this.userModel.findOne({
+      email: email.toLowerCase(),
+    });
     return user || null;
   }
 

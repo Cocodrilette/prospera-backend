@@ -1,5 +1,5 @@
+import { ConfigModule } from '@nestjs/config';
 import { Contract, Wallet, ethers } from 'ethers';
-import { hardhat, polygonZkEvmTestnet } from 'viem/chains';
 
 export class Comunicator {
   private _contractInstance: Contract;
@@ -47,9 +47,11 @@ export class Comunicator {
     return this._contractInstance;
   }
 
-  private _getSigner() {
+  _getSigner() {
     const privateKey = this._getPrivateKey();
     const provider = this._getProvider();
+
+    console.log({ privateKey });
 
     const signer = new Wallet(privateKey, provider);
     return signer;
@@ -74,7 +76,7 @@ export class Comunicator {
     if (process.env.NODE_ENV === 'test') {
       return process.env.LOCAL_SIGNER as `0x${string}`;
     } else if (process.env.NODE_ENV === 'development') {
-      process.env.DEFAULT_SIGNER;
+      return process.env.DEFAULT_SIGNER;
     } else {
       return process.env.LOCAL_SIGNER as `0x${string}`;
     }

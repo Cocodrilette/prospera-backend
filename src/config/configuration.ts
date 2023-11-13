@@ -1,6 +1,20 @@
 import { CieloContractData } from '../blockchain/contracts';
 
 export default () => ({
+  blockchain: {
+    signingKeys: {
+      default:
+        process.env.NODE_ENV === 'test'
+          ? process.env.LOCAL_SIGNER
+          : process.env.DEFAULT_SIGNER,
+    },
+    httpProviderUrl: {
+      default:
+        process.env.NODE_ENV === 'test'
+          ? 'http://localhost:8545'
+          : process.env.TESTNET_RPC_URL,
+    },
+  },
   enviroment: {
     jwtSecret: process.env.JWT_SECRET,
     signKey: process.env.ENCRYPTION_SIGNING_KEY,
