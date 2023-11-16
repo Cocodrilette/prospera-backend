@@ -13,12 +13,15 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
+import { ApiKeyGuard } from 'src/auth/guard/api-key.guard';
 
+@UseGuards(ApiKeyGuard)
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(@Body() createOrderDto: CreateOrderDto, @Req() req: any) {
     return this.ordersService.create(createOrderDto, req.user);
   }

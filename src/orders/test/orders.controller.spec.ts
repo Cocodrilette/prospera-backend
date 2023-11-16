@@ -1,7 +1,7 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { Order } from '../schemas/order.schema';
+import { Order } from '../entities/order.entity';
 import { orderModel } from './utils/mockedModel';
 import { OrdersService } from '../orders.service';
 import { OrdersController } from '../orders.controller';

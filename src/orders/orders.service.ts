@@ -1,19 +1,26 @@
 import { Model } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Currency, OrderStatus } from '../paypal/types/order.types';
 import { PaypalService } from '../paypal/paypal.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { Order } from './schemas/order.schema';
+import { Order } from './entities/order.entity';
 import {
   CreateOrderResponse,
   OrderUpdateSuccess,
 } from './types/responses.types';
 import { BlockchainService } from '../blockchain/blockchain.service';
 import { User } from '../users/entities/user.entity';
+import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
+import { DevLogger } from 'src/common/utils/DevLogger';
 
 @Injectable()
 export class OrdersService {
@@ -25,11 +32,17 @@ export class OrdersService {
     private readonly blockchainService: BlockchainService,
   ) {}
 
+  /**
+   *
+   * @param createOrderDto
+   * @param user This is required here to ensure that the order is related to the authenticated user
+   */
+  @UseGuards(JwtAuthGuard)
   async create(
     createOrderDto: CreateOrderDto,
     user: User,
   ): Promise<CreateOrderResponse> {
-    const order = await this.createOrderObject(createOrderDto);
+    const order = await this.createOrderObject(createOrderDto, user);
     const paypalOrder = await this.paypalService.createOrder(order);
 
     if (paypalOrder.id) {
@@ -97,9 +110,10 @@ export class OrdersService {
 
   private async createOrderObject(
     createOrderDto: CreateOrderDto,
+    user: User,
   ): Promise<Order> {
     const order = new this.orderModel({
-      userAddress: createOrderDto.userAddress,
+      userAddress: user.address,
       tokensAmount: createOrderDto.tokensAmount,
       currency: Currency.USD,
       tokenPrice: 1.0,
