@@ -12,7 +12,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.ALLOWED_ORIGINS,
   });
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(
