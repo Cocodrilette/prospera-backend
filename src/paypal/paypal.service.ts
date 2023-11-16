@@ -5,7 +5,7 @@ import { firstValueFrom, catchError } from 'rxjs';
 import { AuthResponseDto } from './types/authResponde.types';
 import { btoa } from 'buffer';
 import { CreateOrderResponse, Intent } from './types/order.types';
-import { Order } from '../orders/schemas/order.schema';
+import { Order } from '../orders/entities/order.entity';
 
 @Injectable()
 export class PaypalService {

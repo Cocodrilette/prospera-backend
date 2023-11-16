@@ -39,14 +39,6 @@ import { OperationsModule } from './operations/operations.module';
     OperationsModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    Errors,
-    PaypalService,
-    {
-      provide: APP_GUARD,
-      useClass: ApiKeyGuard,
-    },
-  ],
+  providers: [AppService, Errors, PaypalService],
 })
 export class AppModule {}

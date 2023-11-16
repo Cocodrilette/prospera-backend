@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { BlockchainService } from './blockchain.service';
 import { CreateBlockchainDto } from './dto/create-blockchain.dto';
 import { UpdateBlockchainDto } from './dto/update-blockchain.dto';
+import { ApiKeyGuard } from 'src/auth/guard/api-key.guard';
 
+@UseGuards(ApiKeyGuard)
 @Controller('blockchain')
 export class BlockchainController {
   constructor(private readonly blockchainService: BlockchainService) {}

@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { OperationsService } from './operations.service';
 import { CreateOperationDto } from './dto/create-operation.dto';
 import { UpdateOperationDto } from './dto/update-operation.dto';
+import { ApiKeyGuard } from 'src/auth/guard/api-key.guard';
 
+@UseGuards(ApiKeyGuard)
 @Controller('operations')
 export class OperationsController {
   constructor(private readonly operationsService: OperationsService) {}
@@ -23,7 +34,10 @@ export class OperationsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOperationDto: UpdateOperationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateOperationDto: UpdateOperationDto,
+  ) {
     return this.operationsService.update(+id, updateOperationDto);
   }
 
